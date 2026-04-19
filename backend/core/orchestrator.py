@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from collections.abc import Callable
 from typing import TypedDict
@@ -78,10 +77,8 @@ async def _classify_and_retrieve(state: AnalysisState) -> dict:
 
     errors = list(state["errors"])
     try:
-        classified, precedents = await asyncio.gather(
-            classifier.run(clauses),
-            retriever.run(clauses),  # noqa: E501  # retriever accepts ExtractedClause base type
-        )
+        classified = await classifier.run(clauses)
+        precedents = await retriever.run(classified)
     except Exception as exc:
         logger.error("classify_and_retrieve failed: %s", exc)
         errors.append(f"Classification failed: {exc}")

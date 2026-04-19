@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import re
 
@@ -6,12 +7,13 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.output_parsers import PydanticOutputParser
 
 from backend.api.schemas.clauses import ExtractedClause, ExtractionResult
+from backend.config import settings
 from backend.core.parsers.base import ParsedDocument
 from backend.core.prompts.clause_extraction import SYSTEM_PROMPT, USER_TEMPLATE
 
 logger = logging.getLogger(__name__)
 
-# Rough token budget per chunk (conservative — 8B models handle ~4k comfortably)
+# Token budget per chunk — 12k chars ≈ 3k tokens, comfortable for 1B–8B models
 _CHUNK_CHAR_LIMIT = 12_000
 _MAX_RETRIES = 2
 
@@ -81,6 +83,8 @@ class ClauseExtractor:
 
         all_clauses: list[ExtractedClause] = []
         for i, chunk in enumerate(chunks):
+            if i > 0 and settings.llm_request_delay > 0:
+                await asyncio.sleep(settings.llm_request_delay)
             clauses = await self._extract_chunk(chunk, chunk_index=i)
             all_clauses.extend(clauses)
 

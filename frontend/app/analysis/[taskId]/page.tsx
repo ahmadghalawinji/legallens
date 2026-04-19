@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getTaskStatus } from "@/lib/api";
 import type { AnalysisResult } from "@/lib/types";
 import { Dashboard } from "@/components/analysis/Dashboard";
@@ -8,9 +8,9 @@ import { Dashboard } from "@/components/analysis/Dashboard";
 export default function AnalysisPage({
   params,
 }: {
-  params: Promise<{ taskId: string }>;
+  params: { taskId: string };
 }) {
-  const { taskId } = use(params);
+  const { taskId } = params;
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 

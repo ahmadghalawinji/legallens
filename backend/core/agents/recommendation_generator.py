@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import re
 
@@ -6,7 +7,8 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel
 
-from backend.api.schemas.clauses import ClassifiedClause
+from backend.api.schemas.clauses import ClassifiedClause, RiskLevel
+from backend.config import settings
 from backend.core.agents.precedent_retriever import Precedent
 from backend.core.prompts.recommendation import SYSTEM_PROMPT, USER_TEMPLATE
 
@@ -63,6 +65,17 @@ class RecommendationGenerator:
         """
         recommendations = []
         for clause in clauses:
+            if clause.risk_level == RiskLevel.LOW:
+                recommendations.append(Recommendation(
+                    clause_id=clause.id,
+                    plain_explanation=clause.risk_explanation,
+                    key_concerns=[],
+                    suggested_alternative="No changes recommended — standard clause.",
+                    disclaimer=_DISCLAIMER,
+                ))
+                continue
+            if settings.llm_request_delay > 0 and recommendations:
+                await asyncio.sleep(settings.llm_request_delay)
             rec = await self._generate(clause, precedents.get(clause.id, []))
             recommendations.append(rec)
         return recommendations

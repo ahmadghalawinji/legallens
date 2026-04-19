@@ -1,6 +1,6 @@
 """
 LLM provider abstraction. All agents import from here, never from provider-specific packages.
-Supports: Ollama (local), Groq (free tier), HuggingFace (free tier).
+Supports: Ollama (local), Groq (free tier), Gemini (free tier), HuggingFace (free tier).
 """
 from langchain_core.language_models import BaseChatModel
 
@@ -31,6 +31,14 @@ def get_llm(temperature: float = 0.0) -> BaseChatModel:
             return ChatGroq(
                 model=settings.groq_model,
                 api_key=settings.groq_api_key,
+                temperature=temperature,
+            )
+        case "gemini":
+            from langchain_google_genai import ChatGoogleGenerativeAI
+
+            return ChatGoogleGenerativeAI(
+                model=settings.gemini_model,
+                google_api_key=settings.google_api_key,
                 temperature=temperature,
             )
         case "huggingface":

@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class ClauseType(StrEnum):
@@ -31,6 +31,15 @@ class ExtractedClause(BaseModel):
     text: str = Field(description="Exact clause text from the contract")
     confidence: float = Field(ge=0, le=1)
     page_number: int | None = None
+
+    @field_validator("clause_type", mode="before")
+    @classmethod
+    def coerce_clause_type(cls, v: object) -> str:
+        try:
+            ClauseType(str(v))
+            return v
+        except ValueError:
+            return ClauseType.OTHER
 
 
 class ClassifiedClause(ExtractedClause):

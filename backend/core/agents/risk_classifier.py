@@ -5,9 +5,10 @@ import re
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.output_parsers import PydanticOutputParser
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from backend.api.schemas.clauses import ClassifiedClause, ExtractedClause, RiskLevel
+from backend.config import settings
 from backend.core.prompts.risk_classification import SYSTEM_PROMPT, USER_TEMPLATE
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,13 @@ class _RiskVerdict(BaseModel):
     risk_score: float
     risk_explanation: str
     reasoning: str
+
+    @field_validator("reasoning", "risk_explanation", mode="before")
+    @classmethod
+    def coerce_to_str(cls, v: object) -> str:
+        if isinstance(v, list):
+            return " ".join(str(item) for item in v)
+        return str(v) if v is not None else ""
 
 
 def _extract_json(raw: str) -> str:
@@ -48,14 +56,15 @@ class RiskClassifier:
         if not clauses:
             return []
 
-        tasks = [self._classify_clause(clause) for clause in clauses]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-
         classified: list[ClassifiedClause] = []
-        for clause, result in zip(clauses, results, strict=True):
-            if isinstance(result, Exception):
-                logger.error("Failed to classify clause %s: %s", clause.id, result)
-                # Fallback: keep clause with MEDIUM risk rather than dropping it
+        for i, clause in enumerate(clauses):
+            if i > 0 and settings.llm_request_delay > 0:
+                await asyncio.sleep(settings.llm_request_delay)
+            try:
+                result = await self._classify_clause(clause)
+                classified.append(result)
+            except Exception as exc:
+                logger.error("Failed to classify clause %s: %s", clause.id, exc)
                 classified.append(
                     ClassifiedClause(
                         **clause.model_dump(),
@@ -65,8 +74,6 @@ class RiskClassifier:
                         reasoning="Error during automated classification.",
                     )
                 )
-            else:
-                classified.append(result)
 
         logger.debug("RiskClassifier: classified %d clauses", len(classified))
         return classified

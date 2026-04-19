@@ -23,7 +23,7 @@ def _check_chromadb() -> bool:
         import httpx
 
         resp = httpx.get(
-            f"http://{settings.chroma_host}:{settings.chroma_port}/api/v1/heartbeat",
+            f"http://{settings.chroma_host}:{settings.chroma_port}/api/v2/heartbeat",
             timeout=2,
         )
         return resp.status_code == 200
