@@ -11,8 +11,8 @@ AI-powered contract risk analyzer. Upload a PDF or DOCX contract and a multi-age
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 1 | Project scaffold, infrastructure, LLM factory | ✅ Done |
-| 2 | Document parsing (PDF + DOCX) | 🔜 Next |
-| 3 | Core agents — clause extraction + risk classification | ⬜ Pending |
+| 2 | Document parsing (PDF + DOCX) | ✅ Done |
+| 3 | Core agents — clause extraction + risk classification | 🔜 Next |
 | 4 | Knowledge base — RAG with ChromaDB | ⬜ Pending |
 | 5 | Recommendation generator + report assembler | ⬜ Pending |
 | 6 | Frontend (Next.js) | ⬜ Pending |
