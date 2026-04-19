@@ -18,9 +18,7 @@ AI-powered contract risk analyzer. Upload a PDF or DOCX contract and a multi-age
 | 6 | Recommendation generator + report assembler | ✅ Done |
 | 7 | LangGraph orchestration | ✅ Done |
 | 8 | Frontend (Next.js) | ✅ Done |
-| 9 | Evaluation, reports & polish | 🔜 Next |
-| 7 | Frontend (Next.js) | ⬜ Pending |
-| 8 | Evaluation suite | ⬜ Pending |
+| 9 | Evaluation harness, PDF reports, API docs | ✅ Done |
 
 ---
 
