@@ -17,7 +17,8 @@ AI-powered contract risk analyzer. Upload a PDF or DOCX contract and a multi-age
 | 5 | Knowledge base — RAG with ChromaDB | ✅ Done |
 | 6 | Recommendation generator + report assembler | ✅ Done |
 | 7 | LangGraph orchestration | ✅ Done |
-| 8 | Frontend (Next.js) | 🔜 Next |
+| 8 | Frontend (Next.js) | ✅ Done |
+| 9 | Evaluation, reports & polish | 🔜 Next |
 | 7 | Frontend (Next.js) | ⬜ Pending |
 | 8 | Evaluation suite | ⬜ Pending |
 
