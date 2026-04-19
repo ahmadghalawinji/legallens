@@ -14,8 +14,9 @@ AI-powered contract risk analyzer. Upload a PDF or DOCX contract and a multi-age
 | 2 | Document parsing (PDF + DOCX) | ✅ Done |
 | 3 | Core agents — clause extraction + risk classification | ✅ Done |
 | 4 | API endpoints & async pipeline (Celery) | ✅ Done |
-| 5 | Knowledge base — RAG with ChromaDB | 🔜 Next |
-| 6 | Recommendation generator + report assembler | ⬜ Pending |
+| 5 | Knowledge base — RAG with ChromaDB | ✅ Done |
+| 6 | Recommendation generator + report assembler | ✅ Done |
+| 7 | LangGraph orchestration | 🔜 Next |
 | 7 | Frontend (Next.js) | ⬜ Pending |
 | 8 | Evaluation suite | ⬜ Pending |
 
