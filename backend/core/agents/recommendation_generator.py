@@ -107,7 +107,8 @@ class RecommendationGenerator:
         for attempt in range(_MAX_RETRIES + 1):
             try:
                 response = await self._llm.ainvoke(messages)
-                raw = response.content if hasattr(response, "content") else str(response)
+                _content = response.content
+                raw = _content if isinstance(_content, str) else str(_content)
                 raw = _extract_json(raw)
                 output = self._parser.parse(raw)
                 return Recommendation(

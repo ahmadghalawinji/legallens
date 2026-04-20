@@ -37,7 +37,7 @@ class ExtractedClause(BaseModel):
     def coerce_clause_type(cls, v: object) -> str:
         try:
             ClauseType(str(v))
-            return v
+            return str(v)
         except ValueError:
             return ClauseType.OTHER
 

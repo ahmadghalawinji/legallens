@@ -1,5 +1,7 @@
 import logging
 
+from typing import Any
+
 import chromadb
 
 from backend.config import settings
@@ -10,11 +12,11 @@ logger = logging.getLogger(__name__)
 COLLECTION_NAME = "legal_provisions"
 
 
-def _get_client() -> chromadb.HttpClient:
+def _get_client() -> Any:
     return chromadb.HttpClient(host=settings.chroma_host, port=settings.chroma_port)
 
 
-def _get_collection(client: chromadb.HttpClient) -> chromadb.Collection:
+def _get_collection(client: Any) -> Any:
     return client.get_or_create_collection(
         name=COLLECTION_NAME,
         metadata={"hnsw:space": "cosine"},
@@ -24,7 +26,7 @@ def _get_collection(client: chromadb.HttpClient) -> chromadb.Collection:
 def upsert_provisions(
     ids: list[str],
     texts: list[str],
-    metadatas: list[dict],
+    metadatas: list[dict[str, str | int | float | bool]],
 ) -> None:
     """Upsert legal provisions into ChromaDB.
 
@@ -36,7 +38,7 @@ def upsert_provisions(
     client = _get_client()
     collection = _get_collection(client)
     embeddings = embed_batch(texts)
-    collection.upsert(ids=ids, documents=texts, embeddings=embeddings, metadatas=metadatas)
+    collection.upsert(ids=ids, documents=texts, embeddings=embeddings, metadatas=metadatas)  # type: ignore[arg-type]
     logger.debug("Upserted %d provisions", len(ids))
 
 
@@ -66,13 +68,17 @@ def dense_search(
     results = collection.query(**kwargs)
 
     hits = []
-    for i, doc_id in enumerate(results["ids"][0]):
+    ids_list = results["ids"][0] if results["ids"] else []
+    docs_list = results["documents"][0] if results["documents"] else []
+    meta_list = results["metadatas"][0] if results["metadatas"] else []
+    dist_list = results["distances"][0] if results["distances"] else []
+    for i, doc_id in enumerate(ids_list):
         hits.append(
             {
                 "id": doc_id,
-                "text": results["documents"][0][i],
-                "metadata": results["metadatas"][0][i] if results["metadatas"] else {},
-                "distance": results["distances"][0][i] if results["distances"] else 0.0,
+                "text": docs_list[i] if i < len(docs_list) else "",
+                "metadata": meta_list[i] if i < len(meta_list) else {},
+                "distance": dist_list[i] if i < len(dist_list) else 0.0,
             }
         )
     return hits
