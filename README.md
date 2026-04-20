@@ -41,7 +41,7 @@ AI-powered contract risk analyzer. Upload a PDF or DOCX contract and a multi-age
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/your-org/legallens
+git clone https://github.com/ahmadghalawinji/legallens.git
 cd legallens
 make install
 ```
