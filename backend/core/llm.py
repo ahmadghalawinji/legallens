@@ -27,10 +27,11 @@ def get_llm(temperature: float = 0.0) -> BaseChatModel:
             )
         case "groq":
             from langchain_groq import ChatGroq
+            from pydantic import SecretStr
 
             return ChatGroq(
                 model=settings.groq_model,
-                api_key=settings.groq_api_key,
+                api_key=SecretStr(settings.groq_api_key),
                 temperature=temperature,
             )
         case "gemini":
@@ -45,6 +46,7 @@ def get_llm(temperature: float = 0.0) -> BaseChatModel:
             from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 
             llm = HuggingFaceEndpoint(
+                model="meta-llama/Meta-Llama-3.1-8B-Instruct",
                 repo_id="meta-llama/Meta-Llama-3.1-8B-Instruct",
                 huggingfacehub_api_token=settings.hf_api_token,
                 temperature=temperature,

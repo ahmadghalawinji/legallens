@@ -2,6 +2,8 @@ import logging
 from collections.abc import Callable
 from typing import TypedDict
 
+from typing import Any
+
 from langgraph.graph import END, StateGraph
 
 from backend.api.schemas.clauses import ClassifiedClause, ExtractedClause, RiskLevel
@@ -168,10 +170,10 @@ def _build_graph() -> StateGraph:
     graph.add_edge("generate_summary", "compute_score")
     graph.add_edge("compute_score", END)
 
-    return graph.compile()
+    return graph.compile()  # type: ignore[return-value]
 
 
-_compiled_graph = _build_graph()
+_compiled_graph: Any = _build_graph()
 
 
 async def run_analysis_graph(
