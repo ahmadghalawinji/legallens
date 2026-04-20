@@ -1,8 +1,6 @@
 import logging
 from collections.abc import Callable
-from typing import TypedDict
-
-from typing import Any
+from typing import Any, TypedDict
 
 from langgraph.graph import END, StateGraph
 
